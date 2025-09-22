@@ -1,0 +1,23 @@
+# webrtc-app requirements
+
+# Node.js runtime
+node >= 14
+
+# Dependencies (listed in package.json)
+express >= 5.1.0
+ws >= 8.18.3
+uuid >= 13.0.0
+
+# Dev dependencies (optional)
+# @playwright/test is included as a dev dependency in package.json but may be removed if you don't use tests
+
+# Quick setup
+# 1. Install Node.js if not present.
+# 2. From the project root run:
+#    npm install
+# 3. Start the server:
+#    npm start
+
+# Notes
+# - This file is informational (not a pip-style requirements file). For Node projects, dependencies are managed with package.json.
+# - If you want a more strict lock, commit package-lock.json or use npm ci in CI environments.
