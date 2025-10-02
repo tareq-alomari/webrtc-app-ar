@@ -1,21 +1,24 @@
 {
   "name": "webrtc-app",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "تطبيق مكالمات الفيديو الجماعية باستخدام WebRTC",
+  "main": "server.js",
   "scripts": {
-    "test": "playwright test",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "uuid": "^13.0.0",
     "ws": "^8.18.3"
   },
-  "devDependencies": {
-    "@playwright/test": "^1.55.0"
-  }
+  "keywords": [
+    "webrtc",
+    "video-call",
+    "realtime"
+  ],
+  "author": "فريق الطلاب",
+  "license": "MIT"
 }

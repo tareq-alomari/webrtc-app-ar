@@ -1,14 +1,7 @@
 /**
  * =================================================================
- * Custom Stylesheet (ملف الأنماط المخصص) - النسخة النهائية والمُصحّحة
+ * Custom Stylesheet (ملف الأنماط المخصص) - النسخة المحسنة
  * =================================================================
- * * هذا الملف يحتوي على جميع الأنماط المخصصة للمشروع، بما في ذلك:
- * - أنماط صفحة البداية (Lobby).
- * - التصميم المتجاوب لجميع الشاشات.
- * - أنماط واجهة المكالمة (الفيديو، أزرار التحكم).
- * - أنماط نافذة الدردشة ورسائلها.
- * - أنماط قائمة طلبات الانضمام وأزرار التحكم للمضيف.
- * * تم إصلاح مشكلة اختفاء الأزرار على الجوال وتحسين التوافق.
  */
 
 :root {
@@ -18,62 +11,99 @@
     --light-text: #6c757d;
     --border-color: #dee2e6;
     --primary-color: #0d6efd;
+    --success-color: #198754;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #0dcaf0;
     --chat-bg: #f1f3f5;
     --local-msg-bg: #cfe2ff;
     --remote-msg-bg: #e9ecef;
+    --sidebar-width: 350px;
+}
+
+* {
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Tajawal', sans-serif; /* Recommended for Arabic */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--primary-bg);
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Prevent scrolling */
+    overflow: hidden;
     direction: rtl;
+}
+
+/* تحسين الخطوط للعربية */
+body, button, input, textarea {
+    font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
 }
 
 /* --- Lobby View --- */
 #initial-view {
     height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #667eea, #764ba2, #0d6efd, #4a90e2);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
 }
 
 .lobby-card {
     background-color: var(--secondary-bg);
     padding: 2.5rem;
-    border-radius: 15px;
-    -webkit-border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    -webkit-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
     max-width: 500px;
-    width: 90%;
-    animation: fadeIn 0.5s ease-in-out;
-    -webkit-animation: fadeIn 0.5s ease-in-out;
+    width: 100%;
+    animation: fadeInUp 0.6s ease-out;
 }
 
-.uni-logo {
-    max-width: 200px;
-    margin-bottom: 1rem;
+.logo-placeholder {
+    color: var(--primary-color);
 }
 
 .supervisor-card, .students-card {
     background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 0.8rem;
+    border-radius: 12px;
+    padding: 1rem;
     border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+.supervisor-card p:last-child,
+.students-card .d-flex span {
+    color: var(--dark-text);
+    font-weight: 500;
 }
 
-@-webkit-keyframes fadeIn {
-    from { opacity: 0; -webkit-transform: translateY(-20px); }
-    to { opacity: 1; -webkit-transform: translateY(0); }
+.students-card .d-flex {
+    gap: 10px;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 /* --- Call View --- */
@@ -81,9 +111,8 @@ body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    /* FIX: Use dynamic viewport height (dvh) for mobile compatibility */
-    height: 100vh; /* Fallback */
-    height: 100dvh;
+    height: 100vh;
+    height: 100dvh; /* للجوال */
 }
 
 .main-content {
@@ -91,34 +120,57 @@ body {
     display: flex;
     overflow: hidden;
     position: relative;
+    background: #000;
 }
 
 .videos-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 10px;
     padding: 10px;
     width: 100%;
     height: 100%;
     overflow-y: auto;
+    align-content: start;
+    transition: all 0.5s ease;
+}
+
+/* تخطيطات خاصة لشبكة الفيديو */
+.videos-container.layout-1 .video-wrapper {
+    grid-column: 1 / -1;
+    max-width: 80%;
+    margin: auto;
+}
+
+.videos-container.layout-2 {
+    grid-template-columns: 1fr 1fr;
+}
+
+.videos-container.layout-2 .video-wrapper {
+    aspect-ratio: 16 / 9;
 }
 
 .video-wrapper {
     position: relative;
-    background-color: #000;
-    border-radius: 8px;
-    -webkit-border-radius: 8px;
+    background: #1a1a1a;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    -webkit-box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     min-height: 200px;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
+    transition: all 0.3s ease;
+}
+
+.video-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
 }
 
 .video-wrapper video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    background: #000;
 }
 
 .video-wrapper .user-name {
@@ -126,12 +178,19 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
     color: white;
-    padding: 5px 10px;
+    padding: 8px 12px;
     font-size: 0.9rem;
-    text-align: center;
+    font-weight: 500;
     z-index: 5;
+}
+
+.video-wrapper .connection-status {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
 }
 
 .video-wrapper .remote-controls {
@@ -140,75 +199,119 @@ body {
     right: 8px;
     z-index: 10;
     display: flex;
-    gap: 5px;
+    gap: 8px;
     opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-    -webkit-transition: opacity 0.2s ease-in-out;
+    transition: opacity 0.3s ease;
+    background: rgba(0,0,0,0.5);
+    padding: 5px;
+    border-radius: 6px;
 }
 
-/* Show on hover for mouse devices */
 .video-wrapper:hover .remote-controls {
+    animation: fadeIn 0.3s;
     opacity: 1;
 }
 
 .video-wrapper.local {
-    border: 2px solid var(--primary-color);
+    border: 3px solid var(--primary-color);
+}
+
+.video-wrapper.local::before {
+    content: 'أنت';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--primary-color);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    z-index: 5;
 }
 
 /* --- Controls Footer --- */
 .controls-footer {
-    background-color: var(--secondary-bg);
-    padding: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 15px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-    -webkit-box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    gap: 20px;
+    box-shadow: 0 -2px 20px rgba(0,0,0,0.1);
     z-index: 100;
     flex-wrap: wrap;
+    border-top: 1px solid var(--border-color);
 }
 
 .control-btn {
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 1.2rem;
+    width: 56px;
+    height: 56px;
+    font-size: 1.3rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    border: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.control-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.control-btn:active {
+    transform: scale(0.95);
+}
+
+/* إشعار رسالة جديدة */
+#chat-toggle-btn.new-message::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 10px;
+    height: 10px;
+    background-color: var(--danger-color);
+    border-radius: 50%;
 }
 
 /* --- Chat Sidebar --- */
 #chat-sidebar {
     position: fixed;
     top: 0;
-    left: 0;
-    width: 350px;
+    left: 0; /* نثبته على اليسار */
+    width: 400px;
     height: 100%;
     background-color: var(--secondary-bg);
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-    z-index: 200;
+    box-shadow: 2px 0 20px rgba(0,0,0,0.15);
+    z-index: 1000;
     display: flex;
     flex-direction: column;
-    transform: translateX(-100%);
-    -webkit-transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
-    -webkit-transition: -webkit-transform 0.3s ease-in-out;
+    transform: translateX(-100%); /* إخفاؤه خارج الشاشة */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-left: 1px solid var(--border-color);
 }
 
 #chat-sidebar.open {
-    transform: translateX(0);
-    -webkit-transform: translateX(0);
+    transform: translateX(0); /* إظهاره */
 }
 
 .chat-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    padding: 1.25rem;
     border-bottom: 1px solid var(--border-color);
     background-color: var(--primary-bg);
+}
+
+.chat-header h5 {
+    margin: 0;
+    color: var(--dark-text);
+    font-weight: 600;
 }
 
 .chat-messages {
@@ -216,126 +319,435 @@ body {
     overflow-y: auto;
     padding: 1rem;
     background-color: var(--chat-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .chat-message {
-    margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
+    max-width: 85%;
+    animation: messageSlide 0.3s ease-out;
 }
 
 .chat-message .sender {
-    font-weight: bold;
-    font-size: 0.85rem;
+    font-weight: 600;
+    font-size: 0.8rem;
     margin-bottom: 4px;
     color: var(--dark-text);
+    padding: 0 8px;
 }
 
 .chat-message .text {
-    padding: 0.75rem 1rem;
-    border-radius: 12px;
-    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    word-wrap: break-word;
+    line-height: 1.4;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .chat-message.local {
-    align-items: flex-start; /* Right for RTL */
+    align-self: flex-end;
+    align-items: flex-end;
 }
 
 .chat-message.local .text {
-    background-color: var(--local-msg-bg);
-    border-bottom-right-radius: 0;
+    background: var(--primary-color);
+    color: white;
+    border-bottom-right-radius: 4px;
 }
 
 .chat-message.remote {
-    align-items: flex-end; /* Left for RTL */
+    align-self: flex-start;
+    align-items: flex-start;
 }
 
 .chat-message.remote .text {
-    background-color: var(--remote-msg-bg);
-    border-bottom-left-radius: 0;
+    background: var(--secondary-bg);
+    color: var(--dark-text);
+    border: 1px solid var(--border-color);
+    border-bottom-left-radius: 4px;
 }
 
+.chat-message.private .text {
+    background: #fffbe6; /* Light yellow background for private messages */
+    border: 1px solid #ffe58f;
+}
+
+.chat-message.private.local .text {
+    background: #e6f7ff; /* Light blue for sent private messages */
+    border: 1px solid #91d5ff;
+    color: var(--dark-text);
+}
+
+.chat-message.private .sender::after {
+    content: ' (خاص)';
+    color: var(--light-text);
+    font-weight: normal;
+}
 .chat-input-area {
     display: flex;
+    position: relative;
     padding: 1rem;
     border-top: 1px solid var(--border-color);
+    background: var(--primary-bg);
+    gap: 10px;
+}
+
+.chat-input-area .form-control {
+    border-radius: 25px;
+    padding: 12px 20px;
+    border: 1px solid var(--border-color);
+}
+
+.chat-input-area .btn {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Emoji Picker Styles */
+.chat-input-area #emoji-btn {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    border: none;
+}
+
+.chat-input-area emoji-picker {
+    position: absolute;
+    bottom: 75px; /* فوق شريط الإدخال */
+    right: 15px;
+}
+
+.private-chat-indicator {
+    position: absolute;
+    bottom: 80px;
+    right: 15px;
+    background-color: #e9ecef;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: fadeInUp 0.2s;
+}
+.private-chat-indicator .btn-close {
+    padding: 0;
+}
+
+@keyframes messageSlide {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* --- Join Requests Sidebar --- */
 #join-requests-sidebar {
     position: fixed;
-    top: 10px;
-    right: 10px;
-    width: 300px;
-    max-height: 90vh;
+    top: 20px;
+    right: 20px;
+    width: 320px;
+    max-height: calc(100vh - 40px);
     overflow-y: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    z-index: 150;
-    display: none; /* Hidden by default */
-    background-color: rgba(255, 255, 255, 0.95); /* Fallback */
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    z-index: 900;
+    display: none;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
 }
 
 .join-requests-header {
-    padding: 0.75rem 1rem;
-    background-color: var(--primary-color);
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, var(--primary-color), #4a90e2);
     color: white;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.join-requests-header h6 {
+    margin: 0;
+    font-weight: 600;
 }
 
 .join-request-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s ease;
+}
+
+.join-request-item:hover {
+    background-color: var(--primary-bg);
+}
+
+.join-request-item:last-child {
+    border-bottom: none;
+}
+
+.join-request-item span {
+    font-weight: 500;
+    color: var(--dark-text);
+}
+
+.join-request-item .btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
 }
 
 /* --- Status Alerts --- */
 #status-container {
     position: fixed;
-    top: 10px;
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    -webkit-transform: translateX(-50%);
-    z-index: 1000;
+    z-index: 2000;
     width: 90%;
-    max-width: 600px;
+    max-width: 500px;
+    pointer-events: none;
+}
+
+#status-container .alert {
+    pointer-events: auto;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    border: none;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    animation: alertSlide 0.3s ease-out;
+}
+
+@keyframes alertSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* --- Responsive Design --- */
 @media (max-width: 768px) {
-    .videos-container {
-        grid-template-columns: 1fr; /* Single column layout */
-    }
-    
-    /* FIX: Make host controls always visible on touch devices */
-    .video-wrapper .remote-controls {
-        opacity: 1;
-        background-color: rgba(0, 0, 0, 0.4);
-        padding: 4px;
-        border-radius: 5px;
-    }
-
-    #chat-sidebar {
-        width: 100%;
-        transform: translateX(-100%);
-        -webkit-transform: translateX(-100%);
-    }
-
-    #chat-sidebar.open {
-        transform: translateX(0);
-        -webkit-transform: translateX(0);
-    }
-
-    #join-requests-sidebar {
-        width: calc(100% - 20px);
-    }
-
     .lobby-card {
-        padding: 1.5rem;
+        padding: 2rem 1.5rem;
         margin: 1rem;
     }
+    
+    .videos-container {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 8px;
+    }
+    
+    .video-wrapper {
+        min-height: 180px;
+        border-radius: 8px;
+    }
+    
+    .controls-footer {
+        padding: 12px 15px;
+        gap: 15px;
+    }
+    
+    .control-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    #chat-sidebar {
+        width: 100%;
+        /* لا حاجة لتغيير هنا، transform: translateX(-100%) ستعمل بشكل صحيح */
+    }
+    
+    #join-requests-sidebar {
+        width: calc(100% - 40px);
+        right: 20px;
+        left: 20px;
+    }
+    
+    .chat-message {
+        max-width: 90%;
+    }
+    
+    /* جعل أزرار التحكم عن بعد ظاهرة دائمًا على الجوال */
+    .video-wrapper .remote-controls {
+        opacity: 1;
+        background: rgba(0,0,0,0.7);
+    }
+}
+
+@media (max-width: 480px) {
+    .controls-footer {
+        gap: 10px;
+        padding: 10px;
+    }
+    
+    .control-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+    }
+    
+    .students-card .d-flex {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
+
+/* تحسين شريط التمرير */
+.chat-messages::-webkit-scrollbar,
+#join-requests-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track,
+#join-requests-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb,
+#join-requests-sidebar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover,
+#join-requests-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* حالة عدم وجود فيديو */
+.video-wrapper .no-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2c2c2c;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+.video-wrapper .no-video {
+    animation: fadeInUp 0.4s ease-out;
+}
+.video-wrapper .no-video .user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 10px;
+}
+
+/* أيقونة الكتم فوق الصورة الرمزية */
+.avatar-mute-icon {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    font-size: 1.5rem;
+    color: white;
+    background-color: rgba(220, 53, 69, 0.8);
+    padding: 6px;
+    border-radius: 50%;
+    z-index: 15;
+}
+
+/* أيقونة رفع اليد */
+.hand-raised-icon {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    font-size: 1.8rem;
+    color: var(--warning-color);
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 5px 8px;
+    border-radius: 8px;
+    z-index: 15;
+}
+
+/* Poll Styles */
+#poll-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 340px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    z-index: 1100;
+    padding: 1.25rem;
+    animation: alertSlide 0.3s ease-out;
+}
+
+.poll-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.poll-header h6 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.poll-question {
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.poll-options .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    text-align: right;
+}
+
+.poll-result {
+    margin-bottom: 0.75rem;
+}
+
+.poll-result .option-text {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.poll-result .progress {
+    height: 20px;
+    font-size: 0.8rem;
+    background-color: #e9ecef;
 }

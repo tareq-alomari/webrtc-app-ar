@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشروع مكالمات الفيديو</title>
+    <title>مشروع مكالمات الفيديو الجماعية - WebRTC</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📹</text></svg>">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
+    <!-- العرض الأولي (اللوبي) -->
     <div id="initial-view" class="container-fluid d-flex justify-content-center align-items-center">
         <div class="lobby-card text-center">
-            <img src="/assets/logo.jpg" alt="شعار الجامعة" class="uni-logo mb-3" height="150" width="150"> 
+            <div class="logo-placeholder mb-4">
+                <i class="bi bi-camera-video display-1 text-primary"></i>
+            </div>
             <h1 class="mb-2">مشروع مكالمات الفيديو الجماعية</h1>
-            <p class="text-muted mb-4">WebRTC Signaling Server</p>
+            <p class="text-muted mb-4">WebRTC Video Conference</p>
             
             <div class="supervisor-card mb-3">
                 <p class="fw-bold mb-1">إشراف الدكتور:</p>
@@ -23,94 +27,171 @@
 
             <div class="students-card mb-4">
                 <p class="fw-bold mb-2">عمل الطلاب المهندسين:</p>
-                <div class="d-flex justify-content-around">
-                    <span>علي القواس</span>
-                    <span>حازم العمري</span>
-                    <span>طارق العمري</span>
+                <div class="d-flex justify-content-around flex-wrap">
+                    <span class="m-1">علي القواس</span>
+                    <span class="m-1">حازم العمري</span>
+                    <span class="m-1">طارق العمري</span>
                 </div>
             </div>
             
             <div class="input-group mb-3">
                 <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
-                <input type="text" id="name-input" class="form-control" placeholder="أدخل اسمك هنا...">
+                <input type="text" id="name-input" class="form-control" placeholder="أدخل اسمك هنا..." maxlength="20">
             </div>
             <div class="d-grid gap-2">
-                <button id="start-call-btn" class="btn btn-primary btn-lg">
+                <button id="start-call-btn" class="btn btn-primary btn-lg" data-action="start-call" disabled>
                     <i class="bi bi-camera-video-fill me-2"></i>بدء مكالمة جديدة
                 </button>
-                <button id="join-call-btn" class="btn btn-success btn-lg">
+                <button id="join-call-btn" class="btn btn-success btn-lg" data-action="join-call" disabled>
                     <i class="bi bi-person-plus-fill me-2"></i>الانضمام لمكالمة
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- عرض المكالمة -->
     <div id="call-view" class="d-none">
         <main class="main-content">
             <div id="videos-container" class="videos-container">
+                <!-- الفيديو المحلي -->
                 <div id="local-video-wrapper" class="video-wrapper local">
                     <video id="local-video" autoplay playsinline muted></video>
                     <div class="user-name">أنت</div>
+                    <div class="connection-status">
+                        <span class="badge bg-success">متصل</span>
+                    </div>
+                    <i class="bi bi-hand-index-thumb-fill hand-raised-icon d-none"></i>
+                    <i class="bi bi-mic-mute-fill avatar-mute-icon d-none"></i>
+                    <div class="no-video d-none">
+                        <div class="user-avatar"></div>
+                        <div>أنت</div>
+                    </div>
                 </div>
+                <!-- سيتم إضافة مقاطع الفيديو البعيدة هنا ديناميكياً -->
             </div>
         </main>
         
+        <!-- أزرار التحكم -->
         <footer class="controls-footer">
-            <button id="mic-btn" class="btn btn-secondary control-btn" data-bs-toggle="tooltip" title="كتم الصوت">
+            <button id="mic-btn" class="btn btn-secondary control-btn" data-action="toggle-mic" data-bs-toggle="tooltip" title="كتم الصوت">
                 <i class="bi bi-mic-fill"></i>
             </button>
-            <button id="video-btn" class="btn btn-secondary control-btn" data-bs-toggle="tooltip" title="إيقاف الفيديو">
+            <!-- <button id="video-btn" class="btn btn-secondary control-btn" data-action="toggle-video" data-bs-toggle="tooltip" title="إيقاف الكاميرا">
                 <i class="bi bi-camera-video-fill"></i>
+            </button> -->
+            <button id="leave-btn" class="btn btn-danger control-btn" data-action="leave-call" data-bs-toggle="tooltip" title="مغادرة المكالمة">
+                <i class="bi bi-telephone-x-fill"></i>
             </button>
-            <button id="leave-btn" class="btn btn-danger control-btn" data-bs-toggle="tooltip" title="مغادرة">
-                <i class="bi bi-box-arrow-right"></i>
+            <button id="poll-btn" class="btn btn-secondary control-btn d-none" data-action="create-poll" data-bs-toggle="tooltip" title="إنشاء استطلاع">
+                <i class="bi bi-bar-chart-line-fill"></i>
             </button>
-            <button id="chat-toggle-btn" class="btn btn-info control-btn" data-bs-toggle="tooltip" title="الدردشة">
+            <button id="invite-btn" class="btn btn-secondary control-btn d-none" data-action="copy-invite-link" data-bs-toggle="tooltip" title="نسخ رابط الدعوة">
+                <i class="bi bi-link-45deg"></i>
+            </button>
+            <button id="hand-btn" class="btn btn-secondary control-btn" data-action="toggle-hand" data-bs-toggle="tooltip" title="رفع اليد">
+                <i class="bi bi-hand-index-thumb"></i>
+            </button>
+            <button id="chat-toggle-btn" class="btn btn-info control-btn" data-action="toggle-chat" data-bs-toggle="tooltip" title="فتح/إغلاق الدردشة">
                 <i class="bi bi-chat-dots-fill"></i>
             </button>
         </footer>
 
+        <!-- شريط الدردشة الجانبي -->
         <aside id="chat-sidebar">
             <div class="chat-header">
-                <h5>الدردشة</h5>
-                <button id="close-chat-btn" class="btn-close"></button>
+                <h5><i class="bi bi-chat-left-text me-2"></i>الدردشة</h5>
+                <button id="close-chat-btn" class="btn-close" data-action="close-chat" aria-label="إغلاق الدردشة"></button>
             </div>
             <div id="chat-messages" class="chat-messages"></div>
             <div class="chat-input-area">
-                <input type="text" id="chat-input" class="form-control" placeholder="اكتب رسالتك...">
-                <button id="send-chat-btn" class="btn btn-primary"><i class="bi bi-send-fill"></i></button>
+                <emoji-picker class="light d-none"></emoji-picker>
+                <button id="emoji-btn" class="btn btn-light" data-action="toggle-emoji" data-bs-toggle="tooltip" title="إضافة رمز تعبيري">
+                    <i class="bi bi-emoji-smile"></i>
+                </button>
+                <div id="private-chat-indicator" class="private-chat-indicator d-none">
+                    <span></span>
+                    <button class="btn-close btn-close-sm" data-action="cancel-private-chat"></button>
+                </div>
+                <input type="text" id="chat-input" class="form-control" placeholder="اكتب رسالتك... (اضغط Enter للإرسال)" maxlength="500">
+                <button id="send-chat-btn" class="btn btn-primary" data-action="send-chat">
+                    <i class="bi bi-send-fill"></i>
+                </button>
             </div>
         </aside>
 
+        <!-- شريط طلبات الانضمام -->
         <aside id="join-requests-sidebar">
             <div class="join-requests-header">
                 <h6><i class="bi bi-person-check-fill me-2"></i>طلبات الانضمام</h6>
+                <span id="pending-requests-count" class="badge bg-primary">0</span>
             </div>
             <ul id="join-requests-list" class="list-group list-group-flush">
-                </ul>
+                <!-- سيتم إضافة طلبات الانضمام هنا ديناميكياً -->
+            </ul>
         </aside>
 
+        <!-- حاوية التنبيهات -->
         <div id="status-container"></div>
+
+        <!-- حاوية الاستطلاع -->
+        <div id="poll-container" class="poll-container d-none">
+            <!-- سيتم ملء محتوى الاستطلاع هنا ديناميكياً -->
+        </div>
+
     </div>
 
+    <!-- نافذة الانتظار -->
     <div class="modal fade" id="waitingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-body text-center">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
                     </div>
                     <h5 class="mt-3">في انتظار موافقة المضيف...</h5>
                     <p class="text-muted">تم إرسال طلبك للانضمام، يرجى الانتظار.</p>
+                    <button id="cancel-join-btn" class="btn btn-secondary mt-2" data-action="cancel-join">إلغاء</button>
                 </div>
             </div>
         </div>
     </div>
-    
+
+    <!-- نافذة إنشاء استطلاع -->
+    <div class="modal fade" id="createPollModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">إنشاء استطلاع جديد</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="poll-question" class="form-label">السؤال:</label>
+                        <input type="text" class="form-control" id="poll-question" placeholder="ما هو سؤالك؟" maxlength="100">
+                    </div>
+                    <div class="mb-3">
+                        <label for="poll-option1" class="form-label">الخيار 1:</label>
+                        <input type="text" class="form-control" id="poll-option1" placeholder="الإجابة الأولى" maxlength="50">
+                    </div>
+                    <div class="mb-3">
+                        <label for="poll-option2" class="form-label">الخيار 2:</label>
+                        <input type="text" class="form-control" id="poll-option2" placeholder="الإجابة الثانية" maxlength="50">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" id="start-poll-btn" class="btn btn-primary" data-action="start-poll">بدء الاستطلاع</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/UIManager.js"></script>
     <script src="/js/NetworkClient.js"></script>
+    <script src="/js/UIManager.js"></script>
     <script src="/js/SessionManager.js"></script>
+    <script src="/js/hotfix.js"></script>
     <script src="/js/main.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 </body>
 </html>
